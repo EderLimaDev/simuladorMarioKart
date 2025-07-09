@@ -1,3 +1,5 @@
+const readline = require('readline');
+
 const player1 = {
     NOME: "Mario",
     PONTOS: 0,
@@ -40,6 +42,9 @@ const player6 = {
     MANOBRABILIDADE: 2,
     PODER: 5
 };
+
+let userChoice = null;
+let computerChoice = null;
 
 //Rolar dados para determinar valor aleatorio
 
@@ -161,9 +166,65 @@ async function declareWinner(character1, character2) {
 
 //autoinvoked function to start the game
 (async function main() {
-    console.log(`🏁🚨 Corrida entre ${player1.NOME} e ${player2.NOME} começando... \n`);
+    console.log(`🏁🚨 Bem-vindo ao Super Mario Kart! 🚨 \n🏁`);
+    console.log(`🏁🚨 Escolha seu personagen: \n`);
+    console.log(`1. Mario, 2, Peach, 3. Yoshi, 4. Bowser, 5. Luigi, 6. Donkey Kong \n`);
     
-    await playeRaceEngine(player1, player2);
-    await declareWinner(player1, player2);
+    //Usando readline para capturar a escolha do usuário
+    const rl = readline.createInterface({   
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    const choice = await new Promise(resolve => {
+        rl.question('Escolha um valor de (1-6): ', answer => {    
+            resolve(answer);
+            rl.close();
+        }
+    
+        );
+    });
+   
+    switch (choice) {
+        case '1':
+            console.log(`🏁🚨 Você escolheu ${player1.NOME}!`);
+            userChoice = player1;
+            break;
+        case '2':
+            console.log(`🏁🚨 Você escolheu ${player2.NOME}!`);
+            userChoice = player2;
+            break;
+        case '3':
+            console.log(`🏁🚨 Você escolheu ${player3.NOME}!`);
+            userChoice = player3;
+            break;
+        case '4':
+            console.log(`🏁🚨 Você escolheu ${player4.NOME}!`);
+            userChoice = player4;
+            break;
+        case '5':
+            console.log(`🏁🚨 Você escolheu ${player5.NOME}!`);
+            userChoice = player5;
+            break;
+        case '6':
+            console.log(`🏁🚨 Você escolheu ${player6.NOME}!`);
+            userChoice = player6; 
+            break;
+        default:
+            console.log(`🏁🚨 Opção inválida! Escolhendo Mario por padrão.`);
+            userChoice = player1;   
+            break;
+    }
+
+    //Escolhendo o oponente aleatoriamente
+    let players = [player1, player2, player3, player4, player5, player6];
+    players = players.filter(player => player !== userChoice);  // Remove o jogador escolhido pelo usuário
+    computerChoice = players[Math.floor(Math.random() * players.length)];   
+
+
+    console.log(`🏁🚨 Corrida entre ${userChoice.NOME} e ${computerChoice.NOME} começando... \n`);
+    
+    await playeRaceEngine(userChoice, computerChoice);
+    await declareWinner(userChoice, computerChoice);
 
 })();
